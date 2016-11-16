@@ -5,7 +5,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from PyPDF2.pdf import PageObject
 
 
-def impaginate(inputFile, outputFile):
+def impaginate(inputFile, outputFile, scale):
 	file1 = PdfFileReader(file(inputFile, "rb"))
 	output = PdfFileWriter()
 
@@ -21,7 +21,8 @@ def impaginate(inputFile, outputFile):
 	#MARGIN_V = 25*720/pageHeight # e' un magic number
 	ratio = pageWidth/pageHeight
 	# Magari si puo' rimpocciolire ancora con:
-	# ratio = ratio *0.95
+	#scale = 0.8
+	ratio = ratio * scale
 	# Ma e' necessario effettuare il centering delle pagine
 	#print "Margin:", MARGIN_O, MARGIN_V, "Ratio:", ratio
 
@@ -31,8 +32,8 @@ def impaginate(inputFile, outputFile):
 	scaledWidth = pageHeight*ratio
 
 	print scaledWidth, scaledHeight, scaledHeight*2
-	deltaH = (pageHeight - scaledHeight*2)/2
-	deltaW = (0)/2
+	deltaH = (pageHeight - scaledHeight*2)/4
+	deltaW = (pageWidth - scaledWidth)/2
 	
 	cntCreated = 0
 	for index in range(numPages):
@@ -75,19 +76,22 @@ def impaginate(inputFile, outputFile):
 def main(argv):
   	inputFile = ''
   	outputFile = ''
+  	scale = 1.0
    	try:
-		(opts, args) = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+		(opts, args) = getopt.getopt(argv,"hi:o:s:",["ifile=","ofile="])
    	except getopt.GetoptError:
 		print "impaginator.py -i <inputfile> -o <outputfile>"
 		sys.exit(2)
    	for opt, arg in opts:
 		if opt == "-h":
-			print "impaginator.py -i <inputfile> -o <outputfile>"
+			print "impaginator.py -i <inputfile> -o <outputfile> [-s <doubleVal>]"
 			sys.exit()
-		elif opt in ("-i", "--ifile"):
+		elif opt in ("-i", "--input"):
 			inputFile = arg
-		elif opt in ("-o", "--ofile"):
+		elif opt in ("-o", "--output"):
 			outputFile = arg
+		elif opt in ("-s", "--scale"):
+			scale = float(arg)
 
 	if outputFile == "":
 		outputFile = "document-output.pdf"
@@ -95,7 +99,7 @@ def main(argv):
 		print "Non hai specificato un file di input"
 		sys.exit()
 
-	impaginate(inputFile, outputFile)
+	impaginate(inputFile, outputFile, scale)
 
 
 if __name__ == "__main__":
