@@ -34,9 +34,12 @@ def impaginate(inputFile, outputFile):
 	deltaH = (pageHeight - scaledHeight*2)/2
 	deltaW = (0)/2
 	
+	print "\n"
 	cntCreated = 0
 	for index in range(numPages):
-		print "Elaboro pagina:", index+1, "/", numPages
+		progress = str(index+1)
+		sys.stdout.write("\rElaboro pagina " + progress + "/" + str(numPages))
+		sys.stdout.flush()
 		if index % 2 == 0:
 			# imposto la pagina sopra
 			pageA = file1.getPage(index)
